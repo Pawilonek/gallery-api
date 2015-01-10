@@ -30,5 +30,25 @@ App::uses('Controller', 'Controller');
  * @package		app.Controller
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller {
+class AppController extends Controller
+{
+
+    public function beforeFilter()
+    {
+        parent::beforeFilter();
+        $supportedExtensions = array('json');
+        // If there is not supported extension, treat request as json.
+        if (empty($this->RequestHandler->ext) || !in_array($this->RequestHandler->ext, $supportedExtensions)) {
+            $this->RequestHandler->ext = 'json';
+        }
+    }
+
+    protected function showError($code, $message){
+        $this->response->statusCode($code);
+        $this->set(array(
+            'message' => $message,
+            '_serialize' => array('message')
+        ));
+    }
+
 }
