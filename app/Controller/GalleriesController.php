@@ -1,5 +1,7 @@
 <?php
+
 App::uses('AppController', 'Controller');
+
 /**
  * Galleries Controller
  *
@@ -8,97 +10,125 @@ App::uses('AppController', 'Controller');
  */
 class GalleriesController extends AppController {
 
-/**
- * Components
- *
- * @var array
- */
-	public $components = array('Paginator');
+    /**
+     * Components
+     *
+     * @var array
+     */
+    public $components = array('Paginator');
 
-/**
- * index method
- *
- * @return void
- */
-	public function index() {
-		$this->Gallery->recursive = 0;
-		$this->set('galleries', $this->Paginator->paginate());
-	}
+    /**
+     * index method
+     *
+     * @return void
+     */
+    public function index() {
+        $galleries = $this->Gallery->find('all');
+        $this->set(array(
+            'galleries' => $galleries,
+            '_serialize' => array('galleries')
+        ));
+    }
 
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function view($id = null) {
-		if (!$this->Gallery->exists($id)) {
-			throw new NotFoundException(__('Invalid gallery'));
-		}
-		$options = array('conditions' => array('Gallery.' . $this->Gallery->primaryKey => $id));
-		$this->set('gallery', $this->Gallery->find('first', $options));
-	}
+    /**
+     * view method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function view($id = null) {
+        $this->Gallery->recursive = 2;
+        $gallery = $this->Gallery->findById($id);
+        $this->set(array(
+            'gallery' => $gallery,
+            '_serialize' => array('gallery')
+        ));
+    }
 
-/**
- * add method
- *
- * @return void
- */
-	public function add() {
-		if ($this->request->is('post')) {
-			$this->Gallery->create();
-			if ($this->Gallery->save($this->request->data)) {
-				$this->Session->setFlash(__('The gallery has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The gallery could not be saved. Please, try again.'));
-			}
-		}
-	}
+    /**
+     * add method
+     *
+     * @return void
+     */
+    public function add() {
+        $data = $this->request->input();
+        $data = json_decode($data, true);
+        $this->Gallery->create();
+        
+        $data['url'] = $this->generateUrl($data['name']);
 
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		if (!$this->Gallery->exists($id)) {
-			throw new NotFoundException(__('Invalid gallery'));
-		}
-		if ($this->request->is(array('post', 'put'))) {
-			if ($this->Gallery->save($this->request->data)) {
-				$this->Session->setFlash(__('The gallery has been saved.'));
-				return $this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The gallery could not be saved. Please, try again.'));
-			}
-		} else {
-			$options = array('conditions' => array('Gallery.' . $this->Gallery->primaryKey => $id));
-			$this->request->data = $this->Gallery->find('first', $options);
-		}
-	}
+        $gallery = $this->Gallery->save($data);
+        if (!$gallery) {
+            $validationErrors = $this->Gallery->validationErrors;
+            $this->response->statusCode(400);
+        } else {
+            $validationErrors = array();
+        }
 
-/**
- * delete method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		$this->Gallery->id = $id;
-		if (!$this->Gallery->exists()) {
-			throw new NotFoundException(__('Invalid gallery'));
-		}
-		$this->request->allowMethod('post', 'delete');
-		if ($this->Gallery->delete()) {
-			$this->Session->setFlash(__('The gallery has been deleted.'));
-		} else {
-			$this->Session->setFlash(__('The gallery could not be deleted. Please, try again.'));
-		}
-		return $this->redirect(array('action' => 'index'));
-	}
+        $this->set(array(
+            'gallery' => $gallery,
+            'validationErrors' => $validationErrors,
+            '_serialize' => array('gallery', 'validationErrors')
+        ));
+    }
+
+    /**
+     * edit method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function edit($id = null) {
+        
+        if (!$this->Gallery->findById($id)) {
+            $this->showError(404, "Not found");
+            return false;
+        }
+
+        $this->Gallery->id = $id;
+        $data = $this->request->input();
+        $data = json_decode($data, true);
+
+        // We use id from url not from request body
+        if(array_key_exists('id', $data)){
+            unset($data['id']);
+        }
+
+        $gallery = $this->Gallery->save($data);
+        if (!$gallery) {
+            $validationErrors = $this->Gallery->validationErrors;
+            $this->response->statusCode(400);
+        } else {
+            $validationErrors = array();
+        }
+
+        $this->set(array(
+            'gallery' => $gallery,
+            'validationErrors' => $validationErrors,
+            '_serialize' => array('gallery', 'validationErrors')
+        ));
+
+    }
+
+    /**
+     * delete method
+     *
+     * @throws NotFoundException
+     * @param string $id
+     * @return void
+     */
+    public function delete($id = null) {
+        if ($this->Gallery->delete($id)) {
+            $message = 'Deleted';
+        } else {
+            $message = 'Error';
+        }
+        $this->set(array(
+            'message' => $message,
+            '_serialize' => array('message')
+        ));
+    }
+
 }

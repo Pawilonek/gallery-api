@@ -84,8 +84,18 @@ class Layout extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
+            /*
 		'Image' => array(
 			'className' => 'Image',
+			'foreignKey' => 'image_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
+             * 
+             */
+                'File' => array(
+			'className' => 'File',
 			'foreignKey' => 'image_id',
 			'conditions' => '',
 			'fields' => '',

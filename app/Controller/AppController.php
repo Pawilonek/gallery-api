@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application level Controller
  *
@@ -18,7 +19,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
 App::uses('Controller', 'Controller');
 
 /**
@@ -30,25 +30,60 @@ App::uses('Controller', 'Controller');
  * @package		app.Controller
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller
-{
+class AppController extends Controller {
 
-    public function beforeFilter()
-    {
+    /**
+     * Components
+     *
+     * @var array
+     */
+    public $components = array('RequestHandler');
+    protected $loggedUser = null;
+
+    public function beforeFilter() {
         parent::beforeFilter();
         $supportedExtensions = array('json');
         // If there is not supported extension, treat request as json.
         if (empty($this->RequestHandler->ext) || !in_array($this->RequestHandler->ext, $supportedExtensions)) {
             $this->RequestHandler->ext = 'json';
         }
+
+        // Autentykacja
+        if (!empty($this->request->query['hash'])) {
+            $hash = $this->request->query['hash'];
+            //$this->loadModel('User');
+            $this->loadModel('Authentication');
+            $user = $this->Authentication->find('first', array(
+                'conditions' => array(
+                    'Authentication.hash' => $hash
+                )
+            ));
+
+            // TODO: sprawdzanie czy sesja nie wygasła
+            // $user['Authentication']['expiry_date'];
+
+            $this->loggedUser = $user['User'];
+        }
     }
 
-    protected function showError($code, $message){
+    protected function showError($code, $message = "") {
         $this->response->statusCode($code);
         $this->set(array(
             'message' => $message,
             '_serialize' => array('message')
         ));
+    }
+
+    protected function generateUrl($string) {
+        $string = strtolower($string);
+        $plCharset = array(',', ' - ', ' ', 'ę', 'Ę', 'ó', 'Ó', 'Ą', 'ą', 'Ś', 'ś', 'ł', 'Ł', 'ż', 'Ż', 'Ź', 'ź', 'ć', 'Ć', 'ń', 'Ń', '-', "'", "/", "?", '"', ":", '!', '.', '&', '&amp;', '#', ';', '[', ']', '(', ')', '`', '%', '”', '„', '…');
+        $international = array('-', '-', '-', 'e', 'E', 'o', 'P', 'A', 'a', 'S', 's', 'l', 'L', 'z', 'Z', 'z', 'Z', 'c', 'C', 'n', 'N', '-', "", "", "", "", "", '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+        $string = str_replace($plCharset, $international, $string);
+
+        $string = preg_replace('/[^0-9a-z\-]+/', '', $string);
+        $string = preg_replace('/[\-]+/', '-', $string);
+        $string = trim($string, '-');
+        return $string;
     }
 
 }

@@ -9,14 +9,6 @@ App::uses('AppController', 'Controller');
  */
 class LayoutsController extends AppController
 {
-
-    /**
-     * Components
-     *
-     * @var array
-     */
-    public $components = array('RequestHandler');
-
     /**
      * index method
      *
@@ -77,7 +69,7 @@ class LayoutsController extends AppController
      *
      * @throws NotFoundException
      * @param string $id
-     * @return void
+     * @return void|bool
      */
     public function edit($id = null)
     {

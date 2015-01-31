@@ -33,7 +33,7 @@
 /**
  * Routing for rest api
  */
-    Router::mapResources('files', 'galleries', 'hashes', 'images', 'layouts', 'users');
+    Router::mapResources(array('files', 'galleries', 'authentications', 'images', 'layouts', 'users'));
     Router::parseExtensions();
 /**
  * Load all plugin routes. See the CakePlugin documentation on
