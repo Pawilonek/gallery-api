@@ -23,6 +23,7 @@ class GalleriesController extends AppController {
      * @return void
      */
     public function index() {
+        $this->Gallery->recursive = 2;
         $galleries = $this->Gallery->find('all');
         $this->set(array(
             'galleries' => $galleries,
