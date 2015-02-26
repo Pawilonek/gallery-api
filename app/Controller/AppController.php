@@ -32,20 +32,14 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller
 {
-    /**
-     * Components
-     *
-     * @var array
-     */
-    public $components = array(
-        'RequestHandler');
+
+    public $components = array('RequestHandler');
     protected $loggedUser = false;
 
     public function beforeFilter()
     {
         parent::beforeFilter();
-        $supportedExtensions = array(
-            'json');
+        $supportedExtensions = array('json');
         // If there is not supported extension, treat request as json.
         if (empty($this->RequestHandler->ext) || !in_array($this->RequestHandler->ext, $supportedExtensions)) {
             $this->RequestHandler->ext = 'json';
@@ -57,12 +51,14 @@ class AppController extends Controller
 
     protected function checkUserHash()
     {
+        $userHash = $this->request->header('userHash');
+        
         // Sprawdzanie czy klient wysłał userHash
-        if (!$this->request->header('userHash')) {
+        if (!$userHash) {
             return false;
         }
-
-        $userHash = $this->request->header('userHash');
+        
+        // Szukanie użytkownika po userHash
         $this->loadModel('Authentication');
         $loggedUser = $this->Authentication->find('first', array(
             'conditions' => array(
@@ -75,18 +71,15 @@ class AppController extends Controller
             return false;
         }
 
-        var_dump($loggedUser);
-        
         // Sprawdzanie, czy sesja wygasła
         App::uses('CakeTime', 'Utility');
         $expiryDate = CakeTime::fromString($loggedUser['Authentication']['expiry_date']);
         if ($expiryDate < time()) {
-            //TODO: exception?
-            //return false;
+            throw new Exception("sessionExpired", 403);
         }
         
         // Odświerzenie daty wygaśnięcia 
-        $newDate = CakeTime::fromString('+15 minutes');
+        $newDate = CakeTime::fromString(Authentication::HASH_AVAILABILITY_TIME);
         $sqlDate = CakeTime::toServer($newDate);
         $loggedUser['Authentication']['expiry_date'] = $sqlDate;
         $this->Authentication->save($loggedUser['Authentication']);
