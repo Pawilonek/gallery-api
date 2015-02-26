@@ -16,11 +16,14 @@ class AuthenticationsController extends AppController {
      * @return void
      */
     public function index() {
+        /*
         $authentications = $this->Authentication->find('all');
         $this->set(array(
             'Authentications' => $authentications,
             '_serialize' => array('authentications')
         ));
+         * 
+         */
     }
 
     /**
@@ -52,14 +55,14 @@ class AuthenticationsController extends AppController {
         ));
 
         if(empty($user)){
-            $this->showError(404, "Niepoprawna nazwa użytkownika i/lub hasło");
+            $this->showError(400, "Niepoprawna nazwa użytkownika i/lub hasło");
             return false;
         }
         
         $hash = $this->Authentication->create();
         $hash['user_id'] = $user['User']['id'];
         $hash['hash'] = time().md5(rand());
-        $date = new DateTime('now +15 minute');
+        $date = new DateTime(Authentication::HASH_AVAILABILITY_TIME);
         $hash['expiry_date'] = $date->format(DateTime::W3C);
         
         $hash = $this->Authentication->save($hash);

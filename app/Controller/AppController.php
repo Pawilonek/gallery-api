@@ -30,17 +30,14 @@ App::uses('Controller', 'Controller');
  * @package		app.Controller
  * @link		http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
-class AppController extends Controller {
+class AppController extends Controller
+{
 
-    /**
-     * Components
-     *
-     * @var array
-     */
     public $components = array('RequestHandler');
-    protected $loggedUser = null;
+    protected $loggedUser = false;
 
-    public function beforeFilter() {
+    public function beforeFilter()
+    {
         parent::beforeFilter();
         $supportedExtensions = array('json');
         // If there is not supported extension, treat request as json.
@@ -49,35 +46,146 @@ class AppController extends Controller {
         }
 
         // Autentykacja
-        if (!empty($this->request->query['hash'])) {
-            $hash = $this->request->query['hash'];
-            //$this->loadModel('User');
-            $this->loadModel('Authentication');
-            $user = $this->Authentication->find('first', array(
-                'conditions' => array(
-                    'Authentication.hash' => $hash
-                )
-            ));
-
-            // TODO: sprawdzanie czy sesja nie wygasła
-            // $user['Authentication']['expiry_date'];
-
-            $this->loggedUser = $user['User'];
-        }
+        $this->loggedUser = $this->checkUserHash();
     }
 
-    protected function showError($code, $message = "") {
+    protected function checkUserHash()
+    {
+        $userHash = $this->request->header('userHash');
+        
+        // Sprawdzanie czy klient wysłał userHash
+        if (!$userHash) {
+            return false;
+        }
+        
+        // Szukanie użytkownika po userHash
+        $this->loadModel('Authentication');
+        $loggedUser = $this->Authentication->find('first', array(
+            'conditions' => array(
+                'Authentication.hash' => $userHash
+            )
+        ));
+
+        // Sprawdzanie, czy użytkownik został znaleziony
+        if (empty($loggedUser)) {
+            return false;
+        }
+
+        // Sprawdzanie, czy sesja wygasła
+        App::uses('CakeTime', 'Utility');
+        $expiryDate = CakeTime::fromString($loggedUser['Authentication']['expiry_date']);
+        if ($expiryDate < time()) {
+            throw new Exception("sessionExpired", 403);
+        }
+        
+        // Odświerzenie daty wygaśnięcia 
+        $newDate = CakeTime::fromString(Authentication::HASH_AVAILABILITY_TIME);
+        $sqlDate = CakeTime::toServer($newDate);
+        $loggedUser['Authentication']['expiry_date'] = $sqlDate;
+        $this->Authentication->save($loggedUser['Authentication']);
+        
+        return $loggedUser['User'];
+    }
+
+    protected function showError($code, $message = "")
+    {
         $this->response->statusCode($code);
         $this->set(array(
             'message' => $message,
-            '_serialize' => array('message')
+            '_serialize' => array(
+                'message')
         ));
     }
 
-    protected function generateUrl($string) {
+    protected function generateUrl($string)
+    {
         $string = strtolower($string);
-        $plCharset = array(',', ' - ', ' ', 'ę', 'Ę', 'ó', 'Ó', 'Ą', 'ą', 'Ś', 'ś', 'ł', 'Ł', 'ż', 'Ż', 'Ź', 'ź', 'ć', 'Ć', 'ń', 'Ń', '-', "'", "/", "?", '"', ":", '!', '.', '&', '&amp;', '#', ';', '[', ']', '(', ')', '`', '%', '”', '„', '…');
-        $international = array('-', '-', '-', 'e', 'E', 'o', 'P', 'A', 'a', 'S', 's', 'l', 'L', 'z', 'Z', 'z', 'Z', 'c', 'C', 'n', 'N', '-', "", "", "", "", "", '', '', '', '', '', '', '', '', '', '', '', '', '', '', '');
+        $plCharset = array(
+            ',',
+            ' - ',
+            ' ',
+            'ę',
+            'Ę',
+            'ó',
+            'Ó',
+            'Ą',
+            'ą',
+            'Ś',
+            'ś',
+            'ł',
+            'Ł',
+            'ż',
+            'Ż',
+            'Ź',
+            'ź',
+            'ć',
+            'Ć',
+            'ń',
+            'Ń',
+            '-',
+            "'",
+            "/",
+            "?",
+            '"',
+            ":",
+            '!',
+            '.',
+            '&',
+            '&amp;',
+            '#',
+            ';',
+            '[',
+            ']',
+            '(',
+            ')',
+            '`',
+            '%',
+            '”',
+            '„',
+            '…');
+        $international = array(
+            '-',
+            '-',
+            '-',
+            'e',
+            'E',
+            'o',
+            'P',
+            'A',
+            'a',
+            'S',
+            's',
+            'l',
+            'L',
+            'z',
+            'Z',
+            'z',
+            'Z',
+            'c',
+            'C',
+            'n',
+            'N',
+            '-',
+            "",
+            "",
+            "",
+            "",
+            "",
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '');
         $string = str_replace($plCharset, $international, $string);
 
         $string = preg_replace('/[^0-9a-z\-]+/', '', $string);
