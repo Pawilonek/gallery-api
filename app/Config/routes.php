@@ -34,7 +34,7 @@
  * Routing for rest api
  */
     Router::mapResources(array('files', 'galleries', 'authentications', 'images', 'layouts', 'users'));
-    Router::parseExtensions();
+    Router::parseExtensions('json');
 /**
  * Load all plugin routes. See the CakePlugin documentation on
  * how to customize the loading of plugin routes.

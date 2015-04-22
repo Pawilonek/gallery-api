@@ -39,6 +39,12 @@ class AppController extends Controller
     public function beforeFilter()
     {
         parent::beforeFilter();
+
+        // Fix problems with cross domains requests
+        if (is_numeric($this->action) && !method_exists($this, $this->action)) {
+            array_unshift($this->params['pass'], $this->action);
+        }
+
         $supportedExtensions = array('json');
         // If there is not supported extension, treat request as json.
         if (empty($this->RequestHandler->ext) || !in_array($this->RequestHandler->ext, $supportedExtensions)) {

@@ -34,7 +34,7 @@ class AuthenticationsController extends AppController {
      * @return void
      */
     public function view($id = null) {
-
+        exit;
     }
 
     /**

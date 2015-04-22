@@ -8,3 +8,13 @@ How to install:
 
 003. Set host, login and password to database in /app/Config/database.php
 
+
+
+
+
+
+
+php.ini:
+memory_limit = 32M
+upload_max_filesize = 10M
+post_max_size = 20M

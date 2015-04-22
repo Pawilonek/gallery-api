@@ -42,13 +42,11 @@ class File extends AppModel {
             // wiele wpisów
             foreach ($result as $key => $file) {
                 $result[$key]['File']['url'] = FULL_BASE_URL . DIRECTORY_SEPARATOR .
-                        'galeria' . DIRECTORY_SEPARATOR . 'server' . DIRECTORY_SEPARATOR .
                         'uploadFiles' . DIRECTORY_SEPARATOR . $file['File']['filename'];
             }
         } else {
             // Tylko 1 wynik
-            $result['url'] = FULL_BASE_URL . DIRECTORY_SEPARATOR .
-                    'gallery-api' . DIRECTORY_SEPARATOR . 'uploadFiles' .
+            $result['url'] = FULL_BASE_URL . DIRECTORY_SEPARATOR . 'uploadFiles' .
                     DIRECTORY_SEPARATOR . $result['filename'];
         }
         return $result;
