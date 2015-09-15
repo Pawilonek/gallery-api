@@ -33,3 +33,4 @@
 *.ico binary
 *.mo binary
 *.pdf binary
+*.phar binary
