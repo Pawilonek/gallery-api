@@ -194,6 +194,7 @@ if (Configure::read('debug')) {
 DispatcherFactory::add('Asset');
 DispatcherFactory::add('Routing');
 DispatcherFactory::add('ControllerFactory');
+DispatcherFactory::add('REST', ['priority' => 1]);
 
 /**
  * Enable default locale format parsing.
