@@ -15,6 +15,7 @@
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * Application Controller
@@ -37,6 +38,22 @@ class AppController extends Controller
     public function initialize()
     {
         parent::initialize();
-        $this->loadComponent('Flash');
+
+        $this->loadComponent('RequestHandler');
+        $this->loadComponent('Auth', [
+            'authenticate' => [
+                'Form',
+                'ADmad/JwtAuth.Jwt' => [
+                    'parameter' => '_token',
+                    'userModel' => 'Users',
+                    'fields' => [
+                        'id' => 'id'
+                    ]
+                ]
+            ]
+        ]);
+
+        // Render all pages as json
+        $this->RequestHandler->renderAs($this, 'json');
     }
 }
