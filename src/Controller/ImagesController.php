@@ -5,11 +5,11 @@ use Cake\Event\Event;
 use App\Controller\AppController;
 
 /**
- * Galleries Controller
+ * Images Controller
  *
- * @property \App\Model\Table\GalleriesTable $Galleries
+ * @property \App\Model\Table\ImagesTable $Images
  */
-class GalleriesController extends AppController
+class ImagesController extends AppController
 {
 
     public function beforeFilter(Event $event)
@@ -20,30 +20,34 @@ class GalleriesController extends AppController
 
     public function index()
     {
-        $galleries = $this->Galleries->find('all');
+        $images = $this->Images->find('all');
         $this->set([
-            'galleries' => $galleries,
-            '_serialize' => ['galleries']
+            'images' => $images,
+            '_serialize' => ['images']
         ]);
     }
 
     public function view($id = null)
     {
-
+        $image = $this->Images->get($id);
+        $this->set([
+            'image' => $image,
+            '_serialize' => ['image']
+        ]);
     }
 
     public function add()
     {
         // create new user
-        $gallery = $this->Galleries->newEntity($this->request->data);
+        $image = $this->Images->newEntity($this->request->data);
         // validate data and data
-        if ($this->Galleries->save($gallery)) {
+        if ($this->Images->save($image)) {
             // set status code: 201 - Created
             $this->response->statusCode(201);
             // Set response body
             $this->set([
-                'gallery' => $gallery,
-                '_serialize' => ['gallery']
+                'image' => $image,
+                '_serialize' => ['image']
             ]);
             return;
         }
@@ -51,25 +55,27 @@ class GalleriesController extends AppController
         // set status code: 400 - Bad Request
         $this->response->statusCode(400);
         // get validation errors
-        $errors = $gallery->errors();
+        $errors = $image->errors();
         // set response body
         $this->set([
             'errors' => $errors,
             '_serialize' => ['errors']
         ]);
+
     }
+
 
     public function edit($id = null)
     {
-        $gallery = $this->Galleries->get($id);
-        $gallery = $this->Galleries->patchEntity($gallery, $this->request->data);
-        if ($this->Galleries->save($gallery)) {
+        $image = $this->Images->get($id);
+        $image = $this->Images->patchEntity($image, $this->request->data);
+        if ($this->Images->save($image)) {
             // set status code: 201 - Created
             $this->response->statusCode(201);
             // Set response body
             $this->set([
-                'gallery' => $gallery,
-                '_serialize' => ['gallery']
+                'image' => $image,
+                '_serialize' => ['image']
             ]);
             return;
         }
@@ -77,7 +83,7 @@ class GalleriesController extends AppController
         // set status code: 400 - Bad Request
         $this->response->statusCode(400);
         // get validation errors
-        $errors = $gallery->errors();
+        $errors = $image->errors();
         // set response body
         $this->set([
             'errors' => $errors,
@@ -87,9 +93,9 @@ class GalleriesController extends AppController
 
     public function delete($id = null)
     {
-        $gallery = $this->Galleries->get($id);
+        $image = $this->Images->get($id);
 
-        if ($this->Galleries->delete($gallery)) {
+        if ($this->Images->delete($image)) {
             $message = 'deleted';
         } else {
             // something wired heppend
@@ -103,5 +109,4 @@ class GalleriesController extends AppController
             '_serialize' => ['message']
         ]);
     }
-
 }

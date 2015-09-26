@@ -2,22 +2,22 @@
 namespace App\Model\Entity;
 
 use Cake\ORM\Entity;
-use Cake\Auth\DefaultPasswordHasher;
+use Cake\Routing\Router;
 
 /**
- * User Entity.
+ * Image Entity.
  *
  * @property int $id
- * @property string $username
- * @property string $password
- * @property string $email
- * @property string $role
+ * @property string $filename
+ * @property string $original_filename
  * @property \Cake\I18n\Time $created
  * @property \Cake\I18n\Time $modified
- * @property \App\Model\Entity\Authentication[] $authentications
+ * @property \App\Model\Entity\Layout[] $layouts
  */
-class User extends Entity
+class Image extends Entity
 {
+
+    const UPLOAD_DIR = 'uploadedImages';
 
     /**
      * Fields that can be mass assigned using newEntity() or patchEntity().
@@ -33,18 +33,22 @@ class User extends Entity
         'id' => false,
     ];
 
-    protected $_hidden = [
-        'password'
-    ];
+    protected $_virtual = ['absolute_url'];
 
     /**
-     * Hash password
+     * This function generate absolute path to image
      *
-     * @param $password
      * @return string
      */
-    protected function _setPassword($password)
+    protected function _getAbsoluteUrl()
     {
-        return (new DefaultPasswordHasher)->hash($password);
+        // get current host, with http/https
+        $url = Router::url('/', true);
+        // get upload dir
+        $url .= self::UPLOAD_DIR . "/";
+        // get filename
+        $url .= $this->_properties['filename'];
+        // return absolute path
+        return $url;
     }
 }
