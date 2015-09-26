@@ -12,8 +12,8 @@ class Galleries extends AbstractMigration
     {
         $table = $this->table('galleries');
         $table->addColumn('name', 'string', ['limit' => 100])
-            ->addColumn('url', 'string', ['limit' => 100])
-            ->addIndex('url', ['unique' => true])
+            ->addColumn('slug', 'string', ['limit' => 100])
+            ->addIndex('slug', ['unique' => true])
             ->addColumn('created', 'datetime')
             ->addColumn('modified', 'datetime')
             ->create();

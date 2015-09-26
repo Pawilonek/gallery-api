@@ -52,6 +52,7 @@ Router::scope('/', function ($routes) {
             ]
         ]
     ]);
+    $routes->resources('Galleries');
 
     /**
      * Here, we are connecting '/' (base path) to a controller called 'Pages',
