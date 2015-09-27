@@ -29,7 +29,13 @@ class GalleriesController extends AppController
 
     public function view($id = null)
     {
-
+        $gallery = $this->Galleries->get($id, [
+            'contain' => ['Layouts', 'Layouts.Images']
+        ]);
+        $this->set([
+            'gallery' => $gallery,
+            '_serialize' => ['gallery']
+        ]);
     }
 
     public function add()
