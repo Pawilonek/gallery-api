@@ -40,6 +40,7 @@ class UsersController extends AppController
      */
     public function view($id)
     {
+        //var_dump($this->Auth->user());
         $user = $this->Users->get($id);
         $this->set([
             'user' => $user,
