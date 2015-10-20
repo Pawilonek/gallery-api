@@ -27,33 +27,41 @@ use Cake\Event\Event;
  */
 class AppController extends Controller
 {
-
-    /**
-     * Initialization hook method.
-     *
-     * Use this method to add common initialization code like loading components.
-     *
-     * @return void
-     */
     public function initialize()
     {
         parent::initialize();
 
-        $this->loadComponent('RequestHandler');
         $this->loadComponent('Auth', [
+            'storage' => 'Memory',
+            'unauthorizedRedirect' => false,
             'authenticate' => [
                 'Form',
                 'ADmad/JwtAuth.Jwt' => [
                     'parameter' => '_token',
                     'userModel' => 'Users',
+                    //'scope' => ['Users.active' => 1],
                     'fields' => [
-                        'id' => 'id'
+                        'id' => 'id',
+                        'role' => 'role'
                     ]
                 ]
             ]
         ]);
 
         // Render all pages as json
+        $this->loadComponent('RequestHandler');
         $this->RequestHandler->renderAs($this, 'json');
     }
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+
+        //var_dump($this->Auth->user());
+
+        //$user = $this->Auth->identify();
+        //var_dump($user);
+
+    }
+
 }

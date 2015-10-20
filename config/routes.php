@@ -41,6 +41,10 @@ use Cake\Routing\Router;
  */
 Router::defaultRouteClass('Route');
 
+Router::scope('/users/login', function ($routes) {
+    $routes->connect('/', ['controller' => 'Users', 'action' => 'login']);
+});
+
 Router::scope('/', function ($routes) {
 
     $routes->extensions(['json']);
