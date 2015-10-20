@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d8cb1cb3baad934822f0954511d5e7a5",
-    "content-hash": "828e3be50be2badf44b509faf62343a6",
+    "hash": "5bb88b683ad020f164319d5954a12f19",
+    "content-hash": "5c943568c27626257bc0e23ea4e51eee",
     "packages": [
         {
             "name": "admad/cakephp-jwt-auth",
@@ -175,6 +175,53 @@
                 "localization"
             ],
             "time": "2014-08-24 00:00:00"
+        },
+        {
+            "name": "burzum/cakephp-simple-rbac",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/burzum/cakephp-simple-rbac.git",
+                "reference": "69a0528a8086b1f43623a511be9bb2edc6f04c67"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/burzum/cakephp-simple-rbac/zipball/69a0528a8086b1f43623a511be9bb2edc6f04c67",
+                "reference": "69a0528a8086b1f43623a511be9bb2edc6f04c67",
+                "shasum": ""
+            },
+            "require": {
+                "cakephp/cakephp": "3.*",
+                "cakephp/plugin-installer": "*"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "*"
+            },
+            "type": "cakephp-plugin",
+            "autoload": {
+                "psr-4": {
+                    "Burzum\\SimpleRbac\\": "src",
+                    "Burzum\\SimpleRbac\\Test\\Fixture\\": "tests\\Fixture"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florian Krämer",
+                    "homepage": "http://florian-kraemer.net"
+                }
+            ],
+            "description": "A simple to use and configure RBAC authorization adapter for CakePHP",
+            "homepage": "http://github.com/burzum/cakephp-simple-rbac",
+            "keywords": [
+                "auth",
+                "authorization",
+                "rbac"
+            ],
+            "time": "2015-09-29 13:13:47"
         },
         {
             "name": "cakephp/cakephp",

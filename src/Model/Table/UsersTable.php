@@ -14,6 +14,8 @@ use Cake\Validation\Validator;
  */
 class UsersTable extends Table
 {
+    const ROLE_ADMIN = 'admin';
+    const ROLE_USER = 'user';
 
     /**
      * Initialize method
@@ -59,7 +61,7 @@ class UsersTable extends Table
 
         $validator
             ->add('role', 'inList', [
-                'rule' => ['inList', ['admin', 'user']],
+                'rule' => ['inList', [self::ROLE_ADMIN, self::ROLE_USER]],
                 'message' => 'Please enter a valid role'
             ])
             ->allowEmpty('role');

@@ -14,6 +14,7 @@
  */
 namespace App\Controller;
 
+use App\Model\Table\UsersTable;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
 
@@ -45,8 +46,13 @@ class AppController extends Controller
                         'role' => 'role'
                     ]
                 ]
+            ],
+            'authorize' => [
+                'Burzum/SimpleRbac.SimpleRbac'
             ]
         ]);
+
+        //$this->Auth->setUser($this->Auth->identify());
 
         // Render all pages as json
         $this->loadComponent('RequestHandler');
@@ -56,12 +62,7 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-
-        //var_dump($this->Auth->user());
-
-        //$user = $this->Auth->identify();
-        //var_dump($user);
-
+//        var_dump($this->Auth->user());
     }
 
 }

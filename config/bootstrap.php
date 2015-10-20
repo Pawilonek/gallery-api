@@ -203,4 +203,8 @@ DispatcherFactory::add('REST', ['priority' => 1]);
 Type::build('date')->useLocaleParser();
 Type::build('datetime')->useLocaleParser();
 
+// JWT
 Plugin::load('ADmad/JwtAuth');
+// Role Based Access Control (RBAC)
+Plugin::load('Burzum/SimpleRbac');
+Configure::load('rbac');
