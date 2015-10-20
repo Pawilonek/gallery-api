@@ -20,7 +20,9 @@ class PagesController extends AppController
 
     public function index()
     {
-        $pages = $this->Pages->find('all');
+        $pages = $this->Pages
+            ->find('all')
+            ->select(['id', 'title', 'slug']);
         $this->set([
             'pages' => $pages,
             '_serialize' => ['pages']
