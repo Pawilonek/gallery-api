@@ -169,6 +169,7 @@ class UsersController extends AppController
         $token = \JWT::encode(
             array(
                 'id' => $user['id'],
+                'role' => $user['role'],
                 'exp' => time() + WEEK
             ),
             Security::salt()

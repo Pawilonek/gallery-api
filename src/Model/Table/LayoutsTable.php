@@ -1,18 +1,19 @@
 <?php
 namespace App\Model\Table;
 
-use App\Model\Entity\User;
+use App\Model\Entity\Layout;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Users Model
+ * Layouts Model
  *
- * @property \Cake\ORM\Association\HasMany $Authentications
+ * @property \Cake\ORM\Association\BelongsTo $Images
+ * @property \Cake\ORM\Association\BelongsTo $Galleries
  */
-class UsersTable extends Table
+class LayoutsTable extends Table
 {
 
     /**
@@ -25,11 +26,20 @@ class UsersTable extends Table
     {
         parent::initialize($config);
 
-        $this->table('users');
+        $this->table('layouts');
         $this->displayField('id');
         $this->primaryKey('id');
 
         $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Images', [
+            'foreignKey' => 'image_id',
+            'joinType' => 'INNER'
+        ]);
+        $this->belongsTo('Galleries', [
+            'foreignKey' => 'gallery_id',
+            'joinType' => 'INNER'
+        ]);
     }
 
     /**
@@ -44,26 +54,6 @@ class UsersTable extends Table
             ->add('id', 'valid', ['rule' => 'numeric'])
             ->allowEmpty('id', 'create');
 
-        $validator
-            ->requirePresence('username', 'create')
-            ->notEmpty('username');
-
-        $validator
-            ->requirePresence('password', 'create')
-            ->notEmpty('password');
-
-        $validator
-            ->add('email', 'valid', ['rule' => 'email'])
-            ->requirePresence('email', 'create')
-            ->notEmpty('email');
-
-        $validator
-            ->add('role', 'inList', [
-                'rule' => ['inList', ['admin', 'user']],
-                'message' => 'Please enter a valid role'
-            ])
-            ->allowEmpty('role');
-
         return $validator;
     }
 
@@ -76,8 +66,8 @@ class UsersTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
-        $rules->add($rules->isUnique(['username']));
-        $rules->add($rules->isUnique(['email']));
+        $rules->add($rules->existsIn(['image_id'], 'Images'));
+        $rules->add($rules->existsIn(['gallery_id'], 'Galleries'));
         return $rules;
     }
 }

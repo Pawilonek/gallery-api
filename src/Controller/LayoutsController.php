@@ -1,15 +1,15 @@
 <?php
 namespace App\Controller;
 
-use Cake\Event\Event;
 use App\Controller\AppController;
+use Cake\Event\Event;
 
 /**
- * Images Controller
+ * Layouts Controller
  *
- * @property \App\Model\Table\ImagesTable $Images
+ * @property \App\Model\Table\LayoutsTable $Layouts
  */
-class ImagesController extends AppController
+class LayoutsController extends AppController
 {
 
     public function beforeFilter(Event $event)
@@ -20,34 +20,34 @@ class ImagesController extends AppController
 
     public function index()
     {
-        $images = $this->Images->find('all');
+        $layouts = $this->Layouts->find('all');
         $this->set([
-            'images' => $images,
-            '_serialize' => ['images']
+            'layouts' => $layouts,
+            '_serialize' => ['layouts']
         ]);
     }
 
     public function view($id = null)
     {
-        $image = $this->Images->get($id);
+        $layout = $this->Layouts->get($id);
         $this->set([
-            'image' => $image,
-            '_serialize' => ['image']
+            'layout' => $layout,
+            '_serialize' => ['layout']
         ]);
     }
 
     public function add()
     {
-        // create new image
-        $image = $this->Images->newEntity($this->request->data);
+        // create new layout
+        $layout = $this->Layouts->newEntity($this->request->data);
         // validate data and data
-        if ($this->Images->save($image)) {
+        if ($this->Layouts->save($layout)) {
             // set status code: 201 - Created
             $this->response->statusCode(201);
             // Set response body
             $this->set([
-                'image' => $image,
-                '_serialize' => ['image']
+                'layout' => $layout,
+                '_serialize' => ['layout']
             ]);
             return;
         }
@@ -55,7 +55,7 @@ class ImagesController extends AppController
         // set status code: 400 - Bad Request
         $this->response->statusCode(400);
         // get validation errors
-        $errors = $image->errors();
+        $errors = $layout->errors();
         // set response body
         $this->set([
             'errors' => $errors,
@@ -63,18 +63,17 @@ class ImagesController extends AppController
         ]);
     }
 
-
     public function edit($id = null)
     {
-        $image = $this->Images->get($id);
-        $image = $this->Images->patchEntity($image, $this->request->data);
-        if ($this->Images->save($image)) {
+        $layout = $this->Layouts->get($id);
+        $layout = $this->Layouts->patchEntity($layout, $this->request->data);
+        if ($this->Layouts->save($layout)) {
             // set status code: 201 - Created
             $this->response->statusCode(201);
             // Set response body
             $this->set([
-                'image' => $image,
-                '_serialize' => ['image']
+                'layout' => $layout,
+                '_serialize' => ['layout']
             ]);
             return;
         }
@@ -82,7 +81,7 @@ class ImagesController extends AppController
         // set status code: 400 - Bad Request
         $this->response->statusCode(400);
         // get validation errors
-        $errors = $image->errors();
+        $errors = $layout->errors();
         // set response body
         $this->set([
             'errors' => $errors,
@@ -92,9 +91,9 @@ class ImagesController extends AppController
 
     public function delete($id = null)
     {
-        $image = $this->Images->get($id);
+        $layout = $this->Layouts->get($id);
 
-        if ($this->Images->delete($image)) {
+        if ($this->Layouts->delete($layout)) {
             $message = 'deleted';
         } else {
             // something wired heppend
