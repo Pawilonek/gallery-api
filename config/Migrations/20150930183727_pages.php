@@ -10,7 +10,7 @@ class Pages extends AbstractMigration
      * http://docs.phinx.org/en/latest/migrations.html#the-change-method
      * @return void
      */
-    public function change()
+    public function up()
     {
         $table = $this->table('pages');
         $table->addColumn('title', 'string', ['limit' => 100])
@@ -19,5 +19,19 @@ class Pages extends AbstractMigration
             ->addColumn('created', 'datetime')
             ->addColumn('modified', 'datetime')
             ->create();
+
+        // Dodanie strony domowej
+        $PagesTable = \Cake\ORM\TableRegistry::get('Pages');
+        $page = $PagesTable->newEntity();
+        $page->id = 1;
+        $page->title = 'Home';
+        $page->slug = 'home';
+        $page->body = '<p>Witaj!</p><p>Bla bla bla...</p>';
+        $PagesTable->save($page);
+    }
+
+    public function down()
+    {
+        $this->dropTable('pages');
     }
 }

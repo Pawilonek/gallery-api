@@ -16,7 +16,7 @@ class Users extends AbstractMigration
             ->addColumn('modified', 'datetime')
             ->create();
 
-        // Create admin/admin user
+        // Dodanie użytkownika admin/admin
         $UsersTable = \Cake\ORM\TableRegistry::get('Users');
         $user = $UsersTable->newEntity();
         $user->username = 'admin';
