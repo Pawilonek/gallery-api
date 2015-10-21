@@ -52,6 +52,8 @@ class AppController extends Controller
             ]
         ]);
 
+        $this->Auth->identify();
+
         //$this->Auth->setUser($this->Auth->identify());
 
         // Render all pages as json
@@ -62,7 +64,6 @@ class AppController extends Controller
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-//        var_dump($this->Auth->user());
     }
 
 }

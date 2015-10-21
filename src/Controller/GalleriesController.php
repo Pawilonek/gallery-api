@@ -15,12 +15,14 @@ class GalleriesController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow();
+        $this->Auth->allow(['index', 'view']);
     }
 
     public function index()
     {
-        $galleries = $this->Galleries->find('all');
+        $galleries = $this->Galleries->find('all', [
+            'contain' => ['Layouts.Images']
+        ]);
         $this->set([
             'galleries' => $galleries,
             '_serialize' => ['galleries']
@@ -51,6 +53,7 @@ class GalleriesController extends AppController
                 'gallery' => $gallery,
                 '_serialize' => ['gallery']
             ]);
+
             return;
         }
 
@@ -77,6 +80,7 @@ class GalleriesController extends AppController
                 'gallery' => $gallery,
                 '_serialize' => ['gallery']
             ]);
+
             return;
         }
 

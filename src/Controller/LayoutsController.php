@@ -15,7 +15,7 @@ class LayoutsController extends AppController
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
-        $this->Auth->allow();
+        //$this->Auth->allow();
     }
 
     public function index()
