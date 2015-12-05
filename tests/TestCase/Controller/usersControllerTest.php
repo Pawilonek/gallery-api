@@ -66,15 +66,44 @@ class usersControllerTest extends IntegrationTestCase
      */
     public function testIncorrectGet()
     {
+        $token = \JWT::encode(
+            array(
+                'id' => 1,
+                'exp' => time() + WEEK
+            ),
+            \Cake\Utility\Security::salt()
+        );
+        $token = "Bearer " . $token;
+
         $this->configRequest([
-            'headers' => ['Accept' => 'application/json']
+            'headers' => [
+                'Accept' => 'application/json',
+                'Authorization' => $token
+            ]
         ]);
 
         // Pobieranie danych o użytkowniku o id 123
         $this->get('/users/123.json');
 
-        // Sprawdzanie kodu odpowiedzi - 404 Not Found
+        // Sprawdzanie kodu odpowiedzi - 401 Not Found
         $this->assertResponseCode(404);
+    }
+
+    /**
+     * Ten test sprawdza, czy niezalogowany użytkownik może
+     * odczytać dane o innych użytkownikach (nie powinien)
+     */
+    public function testAccess()
+    {
+        $this->configRequest([
+            'headers' => ['Accept' => 'application/json']
+        ]);
+
+        // Pobieranie danych o użytkowniku o id 1
+        $this->get('/users/1.json');
+
+        // Sprawdzanie kodu odpowiedzi - 401 Unauthorized
+        $this->assertResponseCode(401);
     }
 
     /**
