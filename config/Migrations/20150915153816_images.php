@@ -14,6 +14,7 @@ class Images extends AbstractMigration
         $table->addColumn('filename', 'string', ['limit' => 100])
             ->addIndex('filename', ['unique' => true])
             ->addColumn('original_filename', 'string', ['limit' => 100])
+            ->addColumn('info', 'text', ['null' => true, 'default' => null])
             ->addColumn('created', 'datetime')
             ->addColumn('modified', 'datetime')
             ->create();
