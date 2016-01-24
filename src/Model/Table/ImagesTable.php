@@ -62,43 +62,48 @@ class ImagesTable extends Table
         return $validator;
     }
 
+    /**
+     * Metoda odpowiedzialna za zapisanie pliku na serwerze
+     *
+     * @param Event $event
+     * @param ArrayObject $data
+     */
     public function beforeMarshal(Event $event, ArrayObject $data)
     {
-        // Check if file was uploaded.
+        // Sprawdzenie czy jakiś plik został przesłany
         if ($data->offsetExists('file')) {
-            // save file and prepare data
+            // pobranie nazwy przesłanego pliku
             $file = $data->offsetGet('file');
+            // wygenerowanie nowej nazwy pliku
             $filename = $this->generateFilename($file['name']);
+            // zapisanie przeslanego pliku na serwerze
             $dir = WWW_ROOT . Image::UPLOAD_DIR;
             $tmpFile = $file['tmp_name'];
             $newFile = $dir . DIRECTORY_SEPARATOR . $filename;
             move_uploaded_file($tmpFile, $newFile);
+            // zapisanie nowych danych
             $data->offsetSet('filename', $filename);
             $data->offsetSet('original_filename', $file['name']);
             $data->offsetUnset('file');
         }
     }
 
+    /**
+     * Metoda odpowiedzialna za wygenerowanie
+     * unikalnej nazyw pliku używanej w systemie
+     *
+     * @param string $filename
+     * @return string
+     */
     protected function generateFilename($filename)
     {
+        // wygenerowanie początku nazwy pliku
+        // na podstawie aktualnego czasu
         $hash = time();
+        // dodanie do nazyw pliku hashu mp5 z nazwy pliku
         $hash .= md5($filename);
+        // zwrócenie nowej nazwy pliku
         return $hash;
     }
 
-    public function afterFind($result, $primary = false)
-    {
-        if (array_key_exists(0, $result)) {
-            // wiele wpisów
-            foreach ($result as $key => $file) {
-                $result[$key]['File']['url'] = FULL_BASE_URL . DIRECTORY_SEPARATOR .
-                    'uploadFiles' . DIRECTORY_SEPARATOR . $file['File']['filename'];
-            }
-        } else {
-            // Tylko 1 wynik
-            $result['url'] = FULL_BASE_URL . DIRECTORY_SEPARATOR . 'uploadFiles' .
-                DIRECTORY_SEPARATOR . $result['filename'];
-        }
-        return $result;
-    }
 }

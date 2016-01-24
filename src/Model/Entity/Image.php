@@ -36,19 +36,19 @@ class Image extends Entity
     protected $_virtual = ['absolute_url'];
 
     /**
-     * This function generate absolute path to image
+     * Funkcja odpowiedzialna za wygenerowanie absolutnego adresu do obrazka.
      *
      * @return string
      */
     protected function _getAbsoluteUrl()
     {
-        // get current host, with http/https
+        // pobranie adresu url aktualnej strony wraz protokołem http / https
         $url = Router::url('/', true);
-        // get upload dir
+        // dodanie do adresu katalogu z przesłanymi obrazkami
         $url .= self::UPLOAD_DIR . "/";
-        // get filename
+        // dodanie do adresu nazwy aktualnego pliku
         $url .= $this->_properties['filename'];
-        // return absolute path
+        // zarócenie adresu
         return $url;
     }
 }

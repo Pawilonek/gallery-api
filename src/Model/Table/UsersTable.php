@@ -14,13 +14,13 @@ use Cake\Validation\Validator;
  */
 class UsersTable extends Table
 {
+    // role użytkowników wykorzystywanych w systemie
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
 
     /**
-     * Initialize method
      *
-     * @param array $config The configuration for the Table.
+     * @param array $config
      * @return void
      */
     public function initialize(array $config)
@@ -35,10 +35,10 @@ class UsersTable extends Table
     }
 
     /**
-     * Default validation rules.
+     * Metoda odpowiedzialna za przygotowanie reguł walidacji
      *
-     * @param \Cake\Validation\Validator $validator Validator instance.
-     * @return \Cake\Validation\Validator
+     * @param Validator $validator
+     * @return Validator
      */
     public function validationDefault(Validator $validator)
     {
@@ -70,15 +70,16 @@ class UsersTable extends Table
     }
 
     /**
-     * Returns a rules checker object that will be used for validating
-     * application integrity.
+     * Dodatkowe reguły walidacji
      *
-     * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-     * @return \Cake\ORM\RulesChecker
+     * @param RulesChecker $rules
+     * @return RulesChecker
      */
     public function buildRules(RulesChecker $rules)
     {
+        // nazwa użytkownika powinna być unikalna
         $rules->add($rules->isUnique(['username']));
+        // adres email powinien być unikalny
         $rules->add($rules->isUnique(['email']));
         return $rules;
     }
